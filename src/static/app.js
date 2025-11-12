@@ -27,6 +27,51 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
         `;
 
+        // Participants section (created with DOM methods to avoid XSS)
+        const participantsSection = document.createElement("div");
+        participantsSection.className = "participants-section";
+
+        const participantsHeading = document.createElement("h5");
+        participantsHeading.textContent = "Participants";
+        participantsSection.appendChild(participantsHeading);
+
+        if (Array.isArray(details.participants) && details.participants.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "participant-list";
+
+          details.participants.forEach((p) => {
+            const li = document.createElement("li");
+
+            const badge = document.createElement("span");
+            badge.className = "participant-badge";
+            const initials = String(p)
+              .trim()
+              .split(/[\s@._-]+/)
+              .filter(Boolean)
+              .slice(0, 2)
+              .map(s => s[0]?.toUpperCase() || "")
+              .join("");
+            badge.textContent = initials || "U";
+
+            const text = document.createElement("span");
+            text.className = "participant-text";
+            text.textContent = p;
+
+            li.appendChild(badge);
+            li.appendChild(text);
+            ul.appendChild(li);
+          });
+
+          participantsSection.appendChild(ul);
+        } else {
+          const emptyP = document.createElement("p");
+          emptyP.className = "participants-empty";
+          emptyP.textContent = "No participants yet — be the first to sign up!";
+          participantsSection.appendChild(emptyP);
+        }
+
+        activityCard.appendChild(participantsSection);
+
         activitiesList.appendChild(activityCard);
 
         // Add option to select dropdown
